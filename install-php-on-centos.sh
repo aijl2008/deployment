@@ -69,7 +69,8 @@ cd php-7.1.30
   --enable-zip \
   --enable-mysqlnd
 make && make install
-ln -s /usr/local/php/bin/* /usr/local/bin
+ln -s /usr/local/php/bin/php /usr/bin/php
+ln -s /usr/local/php/sbin/php-fpm /usr/bin/php-fpm
 cp php.ini-production /usr/local/php/lib/php.ini
 sed -i "s/display_errors = Off/display_errors = On/" /usr/local/php/lib/php.ini
 sed -i "s/memory_limit = 128M/memory_limit = 1024M/" /usr/local/php/lib/php.ini
@@ -85,19 +86,22 @@ composer global config -g repo.packagist composer https://mirrors.aliyun.com/com
 su php-fpm -c "composer global config -g repo.packagist composer https://mirrors.aliyun.com/composer/"  && su php-fpm -c "composer global config secure-http false"
 tar -zxvf grpc-1.22.0.tgz
 cd grpc-1.22.0
-/usr/local/php/bin/phpize ./configure --with-php-config=/usr/local/php/bin/php-config
+/usr/local/php/bin/phpize 
+./configure --with-php-config=/usr/local/php/bin/php-config
 make && make install
 echo "extension=grpc.so" >> /usr/local/php/lib/php.ini
 cd .. && rm -rf grpc-1.22.0
 tar -zxvf redis-3.1.6.tgz
 cd redis-3.1.6
-/usr/local/php/bin/phpize ./configure --with-php-config=/usr/local/php/bin/php-config
+/usr/local/php/bin/phpize 
+./configure --with-php-config=/usr/local/php/bin/php-config
 make && make install
 echo "extension=redis.so" >> /usr/local/php/lib/php.ini
 cd .. && rm -rf redis-3.1.6
 tar -zxvf mongodb-1.5.5.tgz
 cd mongodb-1.5.5
-/usr/local/php/bin/phpize ./configure --with-php-config=/usr/local/php/bin/php-config
+/usr/local/php/bin/phpize 
+./configure --with-php-config=/usr/local/php/bin/php-config
 make && make install
 echo "extension=mongodb.so" >> /usr/local/php/lib/php.ini
 cd .. && rm -rf mongodb-1.5.5
