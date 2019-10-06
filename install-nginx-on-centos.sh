@@ -1,33 +1,43 @@
 mkdir -p /data/src
+mkdir -p /data/logs/nginx
+/usr/sbin/groupadd -f -g 501 www-data
+/usr/sbin/useradd -m -u 501 -g 501 www-data
 cd /data/src
-curl -o nginx-1.12.2.tar.gz -s http://nginx.org/download/nginx-1.12.2.tar.gz
+curl -o nginx-1.12.2.tar.gz http://nginx.org/download/nginx-1.12.2.tar.gz
 tar -zxvf nginx-1.12.2.tar.gz
 cd nginx-1.12.2
-./configure --prefix=/usr/local/nginx --error-log-path=/data/logs/nginx/error.log --http-log-path=/data/logs/nginx/access.log --user=www-data --group=www-data --with-compat --with-file-aio --with-threads --with-http_addition_module --with-http_auth_request_module --with-http_dav_module --with-http_flv_module --with-http_gunzip_module --with-http_gzip_static_module --with-http_mp4_module --with-http_random_index_module --with-http_realip_module --with-http_secure_link_module --with-http_slice_module --with-http_ssl_module --with-http_stub_status_module  --with-http_sub_module --with-http_v2_module --with-mail --with-mail_ssl_module --with-stream --with-stream_realip_module --with-stream_ssl_module --with-stream_ssl_preread_module && \
+./configure \
+  --prefix=/usr/local/nginx \
+  --error-log-path=/data/logs/nginx/error.log \
+  --http-log-path=/data/logs/nginx/access.log \
+  --user=www-data \
+  --group=www-data \
+  --with-compat \
+  --with-file-aio \
+  --with-threads \
+  --with-http_addition_module \
+  --with-http_auth_request_module \
+  --with-http_dav_module \
+  --with-http_flv_module \
+  --with-http_gunzip_module \
+  --with-http_gzip_static_module \
+  --with-http_mp4_module \
+  --with-http_random_index_module \
+  --with-http_realip_module \
+  --with-http_secure_link_module \
+  --with-http_slice_module \
+  --with-http_ssl_module \
+  --with-http_stub_status_module  \
+  --with-http_sub_module \
+  --with-http_v2_module \
+  --with-mail \
+  --with-mail_ssl_module \
+  --with-stream \
+  --with-stream_realip_module \
+  --with-stream_ssl_module \
+  --with-stream_ssl_preread_module
 make && make install
 cd ..  && rm -rf nginx-1.12.2
-cat > /usr/local/php/etc/php-fpm.conf <<EOF
-[global]
-error_log = /data/logs/php/fpm_errors.log
-process.max = 128
-daemonize = yes
-include = etc/php-fpm.d/*.conf
-EOF
-cat > /usr/local/php/etc/php-fpm.d/pool.conf <<EOF
-[pool-1]
-user = php-fpm
-group = php-fpm
-listen = 127.0.0.1:9000
-pm = static
-pm.max_children = 5
-pm.start_servers = 2
-pm.min_spare_servers = 1
-pm.max_spare_servers = 3
-access.log = /data/logs/php/$pool.access.log
-slowlog = /data/logs/php/$pool.log.slow
-request_slowlog_timeout = 2
-EOF
-
 cat > /usr/local/nginx/conf/nginx.conf  <<EOF
 worker_processes  2;
 events {
@@ -44,7 +54,7 @@ http {
     include vhost/*.conf
 }
 EOF
-mkdir /usr/local/nginx/conf/vhost
+mkdir -p /usr/local/nginx/conf/vhost
 cat > /usr/local/nginx/conf/vhost/default.conf <<EOF
 server {
     listen 1979;
@@ -72,4 +82,4 @@ server {
         include fastcgi_params;
     }
 }
-EOF    
+EOF
